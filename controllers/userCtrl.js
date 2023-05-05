@@ -67,8 +67,12 @@ const updateUserController = async (req, res) => {
         if (password) {
             const isValidPassword = bcrypt.compare(oldPassword, user.password);
             if (!isValidPassword) {
-                res.status(401).send({ message: "Unauthorized User", success: false });
+                return res.status(401).send({ message: "Unauthorized User", success: false });
             }
+
+            //update password with hashing
+            const hashedPassword = await bcrypt.hash(password, 10)
+            req.body.password = hashedPassword;
         }
 
         await user.updateOne(req.body)
